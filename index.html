@@ -185,7 +185,7 @@
         const transferAddress = document.getElementById('transferAddress');
         const receiveAmountDisplay = document.getElementById('receiveAmount');
 
-        const pricePerStarTon = 0.003532; // Price in TON (50 stars = 0.1766 TON)
+        const pricePerStarTon = 0.00266; // Price in TON (50 stars = 0.133 TON)
         const minStars = 50;
         const maxStars = 1000000;
 
@@ -204,26 +204,23 @@
             const stars = parseInt(starInput.value);
             const username = usernameInput.value.trim();
 
-            // Validate the input
             if (stars < minStars || stars > maxStars) {
                 alert(`Please enter a number between ${minStars} and ${maxStars} stars`);
                 return;
             }
 
-            // Validate username format
             if (!username || !username.startsWith('@')) {
                 alert('Please enter a valid Telegram username (e.g., @username)');
                 return;
             }
 
             const totalCostTon = stars * pricePerStarTon;
-            const totalCostNano = Math.round(totalCostTon * 1e9); // Convert TON to nanograms
+            const totalCostNano = Math.round(totalCostTon * 1e9);
             const transferLink = `ton://transfer/UQDKXXb2bY7EpoKU6uayyHwopJHE17NTISUAwrwioDI3FNwz?amount=${totalCostNano}&text=${username}`;
 
-            transferAddress.href = transferLink; // Update the transfer link
-            transferAddress.textContent = transferLink; // Display the transfer link as normal text
+            transferAddress.href = transferLink;
+            transferAddress.textContent = transferLink;
 
-            // Display the amount the user will receive
             receiveAmountDisplay.textContent = `You will receive: ${stars} Stars`;
 
             popup.style.display = 'block';
