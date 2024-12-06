@@ -30,20 +30,38 @@
             padding: 30px;
             border-radius: 15px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-            text-align: center;
+            text-align: left;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .profile-picture {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid #00b4d8;
         }
 
         h1 {
-            margin-bottom: 20px;
             font-size: 2rem;
+            margin: 0;
         }
 
         form {
             display: flex;
             flex-direction: column;
             gap: 15px;
+            width: 100%;
         }
 
         label {
@@ -74,6 +92,28 @@
 
         button:hover {
             background: #0077b6;
+        }
+
+        .cost-info {
+            font-size: 0.9rem;
+            color: lightgray;
+        }
+
+        .reminder {
+            font-size: 0.9rem;
+            color: lightgray;
+            margin-top: 10px;
+        }
+
+        .contact-support {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: lightgray;
+        }
+
+        .contact-support a {
+            color: #00b4d8;
+            text-decoration: none;
         }
 
         .popup {
@@ -117,23 +157,6 @@
             background: #005f76;
         }
 
-        .reminder {
-            font-size: 0.9rem;
-            color: lightgray;
-            margin-top: 10px;
-        }
-
-        .contact-support {
-            margin-top: 20px;
-            font-size: 1rem;
-            color: lightgray;
-        }
-
-        .contact-support a {
-            color: #00b4d8;
-            text-decoration: none;
-        }
-
         @media (max-width: 600px) {
             h1 {
                 font-size: 1.5rem;
@@ -148,15 +171,19 @@
 
 <body>
     <div class="container">
-        <h1>Buy Telegram Stars</h1>
+        <div class="header">
+            <img id="profile-pic" class="profile-picture" src="https://via.placeholder.com/100" alt="Profile Picture" style="display: none;">
+            <h1>Buy Telegram Stars⭐</h1>
+        </div>
+
         <form id="starForm">
             <label for="username">Telegram Username</label>
-            <input type="text" id="username" placeholder="@username" required>
+            <input type="text" id="username" placeholder="@username" oninput="validateUsername()" required>
 
             <label for="stars">Enter Number of Stars</label>
             <input type="number" id="stars" placeholder="Minimum 50 stars" required>
 
-            <p id="cost" style="text-align: left; font-size: 0.9rem; color: lightgray;"></p>
+            <p id="cost" class="cost-info"></p>
             <button type="submit">Proceed to Payment</button>
 
             <p class="reminder">Please double-check your username before proceeding.</p>
@@ -180,6 +207,7 @@
         const starForm = document.getElementById('starForm');
         const starInput = document.getElementById('stars');
         const usernameInput = document.getElementById('username');
+        const profilePic = document.getElementById('profile-pic');
         const costDisplay = document.getElementById('cost');
         const popup = document.getElementById('popup');
         const transferAddress = document.getElementById('transferAddress');
@@ -188,6 +216,17 @@
         const pricePerStarTon = 0.00266; // Price in TON (50 stars = 0.133 TON)
         const minStars = 50;
         const maxStars = 1000000;
+
+        function validateUsername() {
+            const username = usernameInput.value.trim().replace('@', '');
+            if (/^[a-zA-Z0-9_]{5,32}$/.test(username)) {
+                profilePic.src = `https://t.me/i/userpic/320/${username}.jpg`;
+                profilePic.style.display = 'block'; // Show profile picture
+                profilePic.onerror = () => (profilePic.style.display = 'none'); // Hide if loading fails
+            } else {
+                profilePic.style.display = 'none'; // Hide for invalid username
+            }
+        }
 
         starInput.addEventListener('input', () => {
             const stars = parseInt(starInput.value) || 0;
