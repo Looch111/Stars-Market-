@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Telegram Stars</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #141E30, #243B55);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        input {
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+
+        button {
+            background: #00b4d8;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #0077b6;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            z-index: 10;
+            width: 300px;
+            max-width: 95%;
+        }
+
+        .popup a {
+            color: #0077b6;
+            text-decoration: none;
+            font-weight: bold;
+            word-wrap: break-word;
+            display: block;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .popup button {
+            margin-top: 15px;
+            background: #0077b6;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .popup button:hover {
+            background: #005f76;
+        }
+
+        .reminder {
+            font-size: 0.9rem;
+            color: lightgray;
+            margin-top: 10px;
+        }
+
+        .contact-support {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: lightgray;
+        }
+
+        .contact-support a {
+            color: #00b4d8;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Buy Telegram Stars</h1>
+        <form id="starForm">
+            <label for="username">Telegram Username</label>
+            <input type="text" id="username" placeholder="@username" required>
+
+            <label for="stars">Enter Number of Stars</label>
+            <input type="number" id="stars" placeholder="Minimum 50 stars" required>
+
+            <p id="cost" style="text-align: left; font-size: 0.9rem; color: lightgray;"></p>
+            <button type="submit">Proceed to Payment</button>
+
+            <p class="reminder">Please double-check your username before proceeding.</p>
+        </form>
+
+        <div class="contact-support">
+            <p>Need help? <a href="mailto:support@yourwebsite.com">Contact Support</a></p>
+        </div>
+    </div>
+
+    <div class="popup" id="popup">
+        <p>Your TON Transfer Link:</p>
+        <p><a id="transferAddress" href="#" target="_blank">Loading...</a></p>
+        <p>Once the transaction is confirmed, the exact amount will be sent to you. This may take up to 30 minutes.</p>
+        <p id="receiveAmount" style="font-size: 1.1rem; color: #00b4d8;"></p>
+        <button onclick="openTransferLink()">Open Transfer Link</button>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        const starForm = document.getElementById('starForm');
+        const starInput = document.getElementById('stars');
+        const usernameInput = document.getElementById('username');
+        const costDisplay = document.getElementById('cost');
+        const popup = document.getElementById('popup');
+        const transferAddress = document.getElementById('transferAddress');
+        const receiveAmountDisplay = document.getElementById('receiveAmount');
+
+        const pricePerStarTon = 0.003532; // Price in TON (50 stars = 0.1766 TON)
+        const minStars = 50;
+        const maxStars = 1000000;
+
+        starInput.addEventListener('input', () => {
+            const stars = parseInt(starInput.value) || 0;
+            if (stars >= minStars && stars <= maxStars) {
+                const totalCostTon = (stars * pricePerStarTon).toFixed(4);
+                costDisplay.textContent = `Cost: ${totalCostTon} TON`;
+            } else {
+                costDisplay.textContent = '';
+            }
+        });
+
+        starForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const stars = parseInt(starInput.value);
+            const username = usernameInput.value.trim();
+
+            // Validate the input
+            if (stars < minStars || stars > maxStars) {
+                alert(`Please enter a number between ${minStars} and ${maxStars} stars`);
+                return;
+            }
+
+            // Validate username format
+            if (!username || !username.startsWith('@')) {
+                alert('Please enter a valid Telegram username (e.g., @username)');
+                return;
+            }
+
+            const totalCostTon = stars * pricePerStarTon;
+            const totalCostNano = Math.round(totalCostTon * 1e9); // Convert TON to nanograms
+            const transferLink = `ton://transfer/UQDKXXb2bY7EpoKU6uayyHwopJHE17NTISUAwrwioDI3FNwz?amount=${totalCostNano}&text=${username}`;
+
+            transferAddress.href = transferLink; // Update the transfer link
+            transferAddress.textContent = transferLink; // Display the transfer link as normal text
+
+            // Display the amount the user will receive
+            receiveAmountDisplay.textContent = `You will receive: ${stars} Stars`;
+
+            popup.style.display = 'block';
+        });
+
+        function closePopup() {
+            popup.style.display = 'none';
+        }
+
+        function openTransferLink() {
+            const transferLink = transferAddress.href;
+            window.open(transferLink, '_blank');
+            alert('Once the transaction is confirmed, the exact amount will be sent to you. This may take up to 30 minutes.');
+        }
+    </script>
+</body>
+
+</html>
